@@ -1,3 +1,7 @@
+import ExportBtn from "@/components/ExportBtn";
+import EventCard from "@/components/EventCard";
+import { events } from "@/lib/constants";
+
 export default function Home() {
   return (
     <section>
@@ -8,6 +12,19 @@ export default function Home() {
       <p className="text-center mt-5">
         Hackathions, Meetups and Conferences. All in one place
       </p>
+      <ExportBtn />
+      <div className="mt-20 space-y-7">
+        <h3>Featured Events</h3>
+        <ul className="events">
+          {
+            events.map((event) => (
+              <li key={event.title} style={{ listStyle: 'none' }}>
+                <EventCard {...event} />
+              </li>
+            ))
+          }
+        </ul>
+      </div>
     </section>
   );
 }
