@@ -86,8 +86,8 @@ const EventSchema = new Schema<IEvent>(
       type: [String],
       required: [true, 'Agenda is required'],
       validate: {
-        validator: (v: string[]) => v.length > 0,
-        message: 'At least one agenda item is required',
+        validator: (v: string[]) => v && Array.isArray(v) && v.length > 0 && v.every(item => typeof item === 'string' && item.trim().length > 0),
+        message: 'At least one non-empty agenda item is required',
       },
     },
     organizer: {
@@ -99,8 +99,8 @@ const EventSchema = new Schema<IEvent>(
       type: [String],
       required: [true, 'Tags are required'],
       validate: {
-        validator: (v: string[]) => v.length > 0,
-        message: 'At least one tag is required',
+        validator: (v: string[]) => v && Array.isArray(v) && v.length > 0 && v.every(item => typeof item === 'string' && item.trim().length > 0),
+        message: 'At least one non-empty tag is required',
       },
     },
   },
@@ -126,6 +126,16 @@ EventSchema.pre('save', async function() {
   // Normalize time format (HH:MM)
   if (event.isModified('time')) {
     event.time = normalizeTime(event.time);
+  }
+
+  // Trim agenda items
+  if (event.isModified('agenda') && event.agenda) {
+    event.agenda = event.agenda.map(item => item.trim());
+  }
+
+  // Trim tags
+  if (event.isModified('tags') && event.tags) {
+    event.tags = event.tags.map(item => item.trim());
   }
 });
 
